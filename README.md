@@ -1,11 +1,11 @@
-
 # ToDo List App – Objective-C Workshop
 
 A professional task management application built using **Objective-C** and **UIKit**. This app is designed for efficient task organization, local data persistence, and clear prioritization using a structured categorization system.
 
-##  Features
+## Features
 
 ### Core Functionality
+
 * **Task Creation:** Add new tasks with a name, detailed description, and priority level.
 * **Priority Visuals:** Features three priority levels (**High**, **Medium**, and **Low**), each represented by its own **unique image** for clear identification.
 * **Task States:** Manage the lifecycle of a task through three stages:
@@ -15,12 +15,14 @@ A professional task management application built using **Objective-C** and **UIK
 * **Data Persistence:** All tasks are saved **locally**, ensuring your data is preserved every time you visit the app.
 
 ### Management & Organization
+
 * **Segmented Control Navigation:** Effortlessly switch views between:
     * **All Notes**: A complete list of your tasks.
     * **Status Views**: Filter by To-Do, In Progress, or Done.
     * **Priority View**: Tasks are organized into **different sections** based on their priority level (High/Med/Low).
 * **Search Interface:** Quick search by task name. If no results are found, a "pretty" empty state is displayed to inform the user.
-* **Edit & Remove:** * Edit existing tasks with a mandatory **confirmation dialog** before changes are finalized.
+* **Edit & Remove:**
+    * Edit existing tasks with a mandatory **confirmation dialog** before changes are finalized.
     * Delete any task from the list at any time.
 
 ---
@@ -54,5 +56,68 @@ https://github.com/user-attachments/assets/6ba628c2-c1a4-48df-af43-52d4b3ad35ad
 
 ---
 
-##  License
+## License
+
 Developed individually as part of the professional mobile development track at ITI.
+
+---
+
+## What's New — Xcode 14.3 Refactor
+
+The project was refactored and migrated to **Xcode 14.3** with the following additions:
+
+### App Icon
+
+Custom app icon added to `Assets.xcassets`, covering all required iOS sizes (20pt–1024pt) across 1x, 2x, and 3x scales.
+
+### Splash Screen
+
+A branded launch screen configured via `LaunchScreen.storyboard`, displayed on cold launch before the main view controller loads.
+
+### Local Notifications — Task Reminders
+
+Integrated `UNUserNotificationCenter` to schedule local push notifications that remind you about pending tasks — even when the app is backgrounded or closed.
+
+**Permission request on first launch:**
+
+```objc
+UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+[center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert |
+                                         UNAuthorizationOptionSound |
+                                         UNAuthorizationOptionBadge)
+                      completionHandler:^(BOOL granted, NSError *error) {
+    if (granted) {
+        NSLog(@"Notification permission granted.");
+    }
+}];
+```
+
+**Scheduling a reminder when a task is created or updated:**
+
+```objc
+UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+content.title = @"Task Reminder";
+content.body  = task.name;
+content.sound = [UNNotificationSound defaultSound];
+
+UNTimeIntervalNotificationTrigger *trigger =
+    [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:3600 repeats:NO];
+
+UNNotificationRequest *request =
+    [UNNotificationRequest requestWithIdentifier:task.taskID
+                                         content:content
+                                         trigger:trigger];
+
+[[UNUserNotificationCenter currentNotificationCenter]
+    addNotificationRequest:request
+     withCompletionHandler:nil];
+```
+
+> **Note:** For full notification behavior (background delivery), testing on a **physical device** is recommended.
+
+### Updated Tech Stack
+
+| | |
+|---|---|
+| **Notifications** | `UNUserNotificationCenter` ✨ |
+| **Xcode** | 14.3 (updated from Xcode 10) ✨ |
